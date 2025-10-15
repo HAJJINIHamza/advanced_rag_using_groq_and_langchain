@@ -145,6 +145,10 @@ env.bak/
 venv.bak/
 rag_venv
 
+#Folders
+documents
+documents/
+
 # Spyder project settings
 .spyderproject
 .spyproject
