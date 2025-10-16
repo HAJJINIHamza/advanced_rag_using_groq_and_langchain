@@ -40,21 +40,26 @@ vectore_store = FAISS(
     index_to_docstore_id={}
 )
 
-#Load Documents 
-documents = []
-with pdfplumber.open("documents/I-Will-Teach-You-to-Be-Rich-Book-Summary.pdf") as book:
-    for page in book.pages:
-        documents.append(page.extract_text())
-documents = "\n".join(documents)
-#make it document 
-documents_structured = Document(page_content=documents)
+# Fuction to handle pdf file
+def read_structure_chunk_and_store_pdf(pdf_file):
+    #Load Documents 
+    documents = []
+    with pdfplumber.open(pdf_file) as book:
+        for page in book.pages:
+            documents.append(page.extract_text())
+    documents = "\n".join(documents)
+    print ("### Read file")
+    #make it document 
+    documents_structured = Document(page_content=documents)
 
-#Splitting 
-splitter = RecursiveCharacterTextSplitter(chunk_size = 500, chunk_overlap = 100)
-documents_splitted = splitter.split_documents( [documents_structured])
+    #Splitting 
+    splitter = RecursiveCharacterTextSplitter(chunk_size = 500, chunk_overlap = 100)
+    documents_splitted = splitter.split_documents( [documents_structured])
+    print ("### Chunked file")
 
-#Add documents to our vectore store 
-_ = vectore_store.add_documents(documents_splitted)
+    #Add documents to our vectore store 
+    _ = vectore_store.add_documents(documents_splitted)
+    print ("### Added file to vectore store ")
 
 #Define our app input and output types 
 class State(TypedDict):
@@ -80,7 +85,7 @@ prompt = PromptTemplate(
     input_variables = ["question", "context"]
     )
 
-#Generate funct
+#Generate function
 def generate(state : State):
     context = "\n\n relevant information :\n".join(text.page_content for text in state["context"])
     messages = prompt.invoke({"question": state["question"], "context": context})
@@ -96,6 +101,13 @@ rag_app = workflow.compile()
 st.set_page_config(page_title="Chat with RAG, powered by Groq capabilities.")
 st.header("Chat with RAG, powered by Groq capabilites.")
 
+uploaded_file = st.file_uploader(
+    "Upload document",
+    type = ["pdf"]
+)
+if uploaded_file is not None:
+    read_structure_chunk_and_store_pdf(pdf_file = uploaded_file)
+
 if question := st.chat_input("Ask a question"):
     st.chat_message("User").write(question)
     #Include streaming 
@@ -108,7 +120,6 @@ if question := st.chat_input("Ask a question"):
         )   
 
 
-#ADD streaming
 #ADD sources
 #Give the user option to include its own documents 
 #Make it conversational style 
