@@ -16,4 +16,4 @@ short_description: RAG application leveraging groq APIs, and langchain orch
 link
 
 ### Application screenshot
-![Application screenshot](ressources/application_screen1.png)
+![Application screenshot](application_screen1.png)
