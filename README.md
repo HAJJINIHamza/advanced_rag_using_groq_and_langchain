@@ -13,7 +13,7 @@ short_description: RAG application leveraging groq APIs, and langchain orch
 # RAG GROQ APP
 
 ### Application link for demo 
-link
+[Link to test application](https://huggingface.co/spaces/HAJJINIHamza/advanced_rag_with_groq_and_langchain)
 
 ### Application screenshot
 ![Application screenshot](application_screen1.png)
