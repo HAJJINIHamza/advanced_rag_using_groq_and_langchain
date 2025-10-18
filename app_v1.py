@@ -151,26 +151,24 @@ if question := st.chat_input("Ask a question"):
         st.warning("⚠️ Please upload a PDF document first!")
     else:
         st.chat_message("user").write(question)
+        
         # Get the vector store from session state
         vector_store = st.session_state.vector_store
-
-        #For now we gave up streaming in order to dispaly sources 
-        output = rag_app.invoke(
-                    {"question": question,
-                     "vector_store": vector_store}
-                    )
         
-        st.chat_message("assistant").write(output["answer"].content)
-        # Display sources 
-        for i, doc in enumerate(output["context"]):
-            st.markdown(f"**Source {i}** :")
-            st.text(doc.page_content)
-            st.markdown("---")
+        # Include streaming - PASS vector_store in the initial state
+        with st.chat_message("assistant"):
+            st.write_stream(
+                message.content for message, _ in rag_app.stream(
+                    {
+                        "question": question,
+                        "vector_store": vector_store  # Pass it here!
+                    },
+                    stream_mode='messages'
+                )
+            )
 
 # Add a clear button to reset the session
 with st.sidebar:
     if st.button("Clear chat history"):
         st.session_state.clear()
         st.rerun()
-
-#Return sources 
