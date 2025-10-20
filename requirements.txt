@@ -7,3 +7,4 @@ sentence_transformers
 faiss-cpu
 pdfplumber
 streamlit
+beautifulsoup4
