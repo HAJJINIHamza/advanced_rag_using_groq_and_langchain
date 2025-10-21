@@ -8,3 +8,4 @@ faiss-cpu
 pdfplumber
 streamlit
 beautifulsoup4
+ddgs
